@@ -23,8 +23,11 @@ public final class AudioProcessingEngine {
             throw AudioProcessingError.noAudioTrackFound
         }
         
-        // Remove existing file if present
-        try? FileManager.default.removeItem(at: outputURL)
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("extract_\(UUID().uuidString).m4a")
+        try? FileManager.default.removeItem(at: tempURL)
+        defer {
+            try? FileManager.default.removeItem(at: tempURL)
+        }
         
         guard let exportSession = AVAssetExportSession(
             asset: asset,
@@ -33,10 +36,32 @@ public final class AudioProcessingEngine {
             throw AudioProcessingError.exportSessionCreationFailed
         }
         
-        exportSession.outputURL = outputURL
+        exportSession.outputURL = tempURL
         exportSession.outputFileType = .m4a
         
-        await exportSession.export()
+        // Progress polling task
+        let progressMonitor = Task {
+            while !Task.isCancelled {
+                let p = exportSession.progress
+                progressHandler?(p)
+                if exportSession.status == .completed || exportSession.status == .failed || exportSession.status == .cancelled {
+                    break
+                }
+                try? await Task.sleep(nanoseconds: 50_000_000) // 50ms interval
+            }
+        }
+        
+        await withTaskCancellationHandler {
+            await exportSession.export()
+        } onCancel: {
+            exportSession.cancelExport()
+        }
+        
+        progressMonitor.cancel()
+        
+        if Task.isCancelled || exportSession.status == .cancelled {
+            throw CancellationError()
+        }
         
         if let error = exportSession.error {
             throw error
@@ -44,6 +69,12 @@ public final class AudioProcessingEngine {
         if exportSession.status != .completed {
             throw AudioProcessingError.exportFailed(exportSession.status)
         }
+        
+        progressHandler?(1.0)
+        
+        // Clean and move to final output destination
+        try? FileManager.default.removeItem(at: outputURL)
+        try FileManager.default.moveItem(at: tempURL, to: outputURL)
     }
     
     // MARK: - Audio Trimming
