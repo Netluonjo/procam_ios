@@ -150,7 +150,7 @@ public struct VideoToAudioView: View {
                     dismiss()
                 }
             } message: {
-                Text("File âm thanh '\(videoTitle).\(outputFormat.fileExtension)' đã được tạo thành công.")
+                Text("Tệp âm thanh '\(videoTitle).\(outputFormat.fileExtension)' đã được trích xuất thành công và lưu vào Thư viện.")
             }
             .alert("Lỗi trích xuất", isPresented: Binding(
                 get: { errorMessage != nil },
@@ -313,7 +313,7 @@ public struct VideoToAudioView: View {
                     
                     // Dynamic filled percentage ring
                     Circle()
-                        .trim(from: 0.0, to: CGFloat(min(max(extractionProgress, 0.0), 1.0)))
+                        .trim(from: 0.0, to: CGFloat(min(max(extractionProgress, 0.01), 1.0)))
                         .stroke(
                             LinearGradient(
                                 colors: [
@@ -331,11 +331,11 @@ public struct VideoToAudioView: View {
                     
                     // Percentage & Waveform icon in center
                     VStack(spacing: 3) {
-                        Image(systemName: "waveform")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(AudioEditorTheme.accentRed)
+                        Image(systemName: extractionProgress >= 1.0 ? "checkmark.circle.fill" : "waveform")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(extractionProgress >= 1.0 ? .green : AudioEditorTheme.accentRed)
                         
-                        Text("\(Int(min(max(extractionProgress, 0.0), 1.0) * 100))%")
+                        Text("\(Int(min(max(extractionProgress * 100, 1), 100)))%")
                             .font(.system(size: 28, weight: .bold, design: .rounded))
                             .foregroundColor(Color(UIColor.label))
                     }
@@ -343,7 +343,7 @@ public struct VideoToAudioView: View {
                 .padding(.top, 6)
                 
                 VStack(spacing: 6) {
-                    Text("Đang bóc tách âm thanh")
+                    Text("Đang trích xuất âm thanh")
                         .font(.system(size: 18, weight: .bold))
                         .foregroundColor(Color(UIColor.label))
                     
@@ -382,14 +382,16 @@ public struct VideoToAudioView: View {
     
     private func statusMessageForProgress(_ progress: Float) -> String {
         switch progress {
-        case 0.0..<0.15:
+        case 0.0..<0.25:
             return "Đang nạp video và khởi tạo tiến trình..."
-        case 0.15..<0.75:
-            return "Đang bóc tách dải âm thanh từ video..."
-        case 0.75..<0.95:
+        case 0.25..<0.65:
+            return "Đang trích xuất dải âm thanh từ video..."
+        case 0.65..<0.90:
             return "Đang mã hóa định dạng \(outputFormat.rawValue)..."
+        case 0.90..<1.0:
+            return "Đang lưu tệp âm thanh vào Thư viện..."
         default:
-            return "Đang hoàn tất tệp âm thanh..."
+            return "Trích xuất thành công! (100%)"
         }
     }
     
@@ -405,7 +407,7 @@ public struct VideoToAudioView: View {
         guard let videoURL = selectedVideoURL else { return }
         withAnimation(.easeInOut(duration: 0.2)) {
             isExtracting = true
-            extractionProgress = 0.0
+            extractionProgress = 0.01 // Start immediately at 1%
         }
         
         let outputName = videoTitle.isEmpty ? "Extracted_Audio" : videoTitle
@@ -413,45 +415,65 @@ public struct VideoToAudioView: View {
         
         extractionTask = Task {
             do {
-                var targetProgress: Float = 0.0
+                var isEngineFinished = false
+                var engineError: Error? = nil
                 
-                // Smooth ticker for fluid visual progress
-                let ticker = Task {
-                    while !Task.isCancelled {
-                        try? await Task.sleep(nanoseconds: 25_000_000) // 25ms
+                // Launch native AVFoundation audio extraction in background
+                Task {
+                    do {
+                        try await AudioProcessingEngine.shared.extractAudioFromVideo(
+                            videoURL: videoURL,
+                            outputURL: targetURL
+                        )
+                        isEngineFinished = true
+                    } catch {
+                        engineError = error
+                        isEngineFinished = true
+                    }
+                }
+                
+                // Smooth progressive count-up from 1% to 92%
+                var currentPercent = 1
+                while currentPercent < 92 && !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: 30_000_000) // 30ms per step
+                    currentPercent += 1
+                    await MainActor.run {
+                        self.extractionProgress = Float(currentPercent) / 100.0
+                    }
+                }
+                
+                // Await background engine completion
+                while !isEngineFinished && !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: 60_000_000)
+                    if currentPercent < 96 {
+                        currentPercent += 1
                         await MainActor.run {
-                            if extractionProgress < targetProgress {
-                                let step = max(0.008, (targetProgress - extractionProgress) * 0.2)
-                                extractionProgress = min(targetProgress, extractionProgress + step)
-                            }
+                            self.extractionProgress = Float(currentPercent) / 100.0
                         }
                     }
                 }
                 
-                try await AudioProcessingEngine.shared.extractAudioFromVideo(
-                    videoURL: videoURL,
-                    outputURL: targetURL
-                ) { rawProgress in
-                    Task { @MainActor in
-                        targetProgress = max(targetProgress, rawProgress)
-                    }
+                if let error = engineError {
+                    throw error
                 }
                 
-                targetProgress = 1.0
-                while extractionProgress < 0.99 && !Task.isCancelled {
+                guard !Task.isCancelled else { return }
+                
+                // Smoothly finish 93% -> 100%
+                while currentPercent < 100 && !Task.isCancelled {
                     try? await Task.sleep(nanoseconds: 25_000_000)
+                    currentPercent += 1
                     await MainActor.run {
-                        extractionProgress = min(1.0, extractionProgress + 0.04)
+                        self.extractionProgress = Float(currentPercent) / 100.0
                     }
                 }
-                ticker.cancel()
                 
                 await MainActor.run {
-                    extractionProgress = 1.0
+                    self.extractionProgress = 1.0
                 }
                 
-                // Aesthetic pause so user sees 100% completion
-                try? await Task.sleep(nanoseconds: 300_000_000)
+                // Hold at 100% so user clearly sees full completion
+                try? await Task.sleep(nanoseconds: 450_000_000)
                 
                 guard !Task.isCancelled else { return }
                 
