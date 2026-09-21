@@ -1,97 +1,108 @@
-# ProCam iOS – Professional Manual Camera for iOS
+# MP3 Converter & Audio Editor for iOS
 
-Ứng dụng máy ảnh chuyên nghiệp native cho hệ điều hành iOS (viết bằng **SwiftUI**, **AVFoundation**, **CoreMotion**, **CoreGraphics/vImage** và **AVAudioSession**), phiên bản đối ứng hoàn chỉnh 100% với **ProCam Android**, kết hợp phong cách DSLR cao cấp và tinh hoa từ **Halide Camera** & **ProCam**.
+Ứng dụng biên tập, chuyển đổi âm thanh và đồng bộ lời bài hát Karaoke chuyên nghiệp cho iOS (viết bằng **SwiftUI**, **AVFoundation**, **Network framework**, **Speech Recognition**).
 
 ---
 
-## 📸 Tính năng cốt lõi (Features)
+## 🎵 Tính năng cốt lõi (Features)
 
-### 1. Điều khiển thủ công hoàn toàn (Full Manual Controls)
-- **Tốc độ màn trập (Shutter Speed - SEC):** Tùy biến từ $1/8000\text{s}$ đến $30\text{s}$ bằng thước đo cơ học với kim đỏ ProCam Red (`ProCamRulerDialView`).
-- **Độ nhạy sáng (ISO):** Tinh chỉnh từ ISO 50 đến 6400 bằng vòng xoay 3D Halide Drum Dial (`HalideDrumDialView`), kèm phím tắt nhảy nhanh `[ AUTO ]`, `[ 100 ]`, `[ 400 ]`, `[ 1600 ]`.
-- **Lấy nét thủ công (Manual Focus - AF):** Vòng lấy nét mượt mà từ cận cảnh (`MACRO`), $0.1\text{m}$, $0.5\text{m}$, $1.0\text{m}$ đến vô cực ($\infty$) kèm phím tắt nhanh (`HalideFocusDialView`).
-- **Cân bằng trắng (White Balance - AWB):** Điều chỉnh nhiệt độ màu Kelvin từ $2000\text{K}$ đến $10000\text{K}$ với chấm màu quang phổ trực quan và phím chọn nhanh `[ AUTO ]`, `[ INCAN ]`, `[ FLUOR ]`, `[ DAY ]`, `[ SHADE ]` (`HalideWbDialView`).
-- **Bù trừ sáng (Exposure Compensation - EV):** Vòng xoay khắc số 3D từ $-3.0\text{EV}$ đến $+4.0\text{EV}$ theo từng nấc $0.5\text{EV}$, kèm phím nhảy nhanh `[ 0.0 ]`, `[ +1.0 ]`, `[ +2.0 ]`, `[ +3.0 ]`.
-- **Khóa đo sáng & lấy nét độc lập (E/F Lock):** Phím bấm kích hoạt nhanh `[ LOCK AE/AF ]` và `[ LOCK WB ]`.
+### 1. Trình phát nhạc Studio & Lời bài hát Karaoke (Studio Player & Synced Lyrics)
+- **Sóng âm thanh trực quan (Waveform Visualizer):** Hiển thị dạng sóng âm thanh tương tác theo thời gian thực, hỗ trợ cuộn và trượt playhead với kim đỏ trung tâm chuẩn xác.
+- **Lời bài hát Karaoke chạy chữ thời gian thực (Synchronized Lyrics):**
+  - Tự động cuộn mượt mà theo đúng câu hát đang phát.
+  - Chạm vào bất kỳ câu hát nào để nhảy ngay đến đoạn nhạc tương ứng (Tap to Seek).
+  - Tinh chỉnh độ lệch thời gian (Offset +/- 0.5s) để khớp hoàn hảo giữa âm thanh và lời.
+- **Tìm kiếm lời bài hát tự động (Online & Offline LRC Search):**
+  - Kho lời ngoại tuyến sẵn có cho nhiều bài hát thịnh hành (như *Xương Rồng - Dangrangto*, *Ghi âm 1*, v.v.).
+  - Tìm kiếm lời đồng bộ trực tuyến từ cơ sở dữ liệu mở quốc tế (LRCLIB).
+- **Tự động trích xuất lời thoại bằng AI (Speech Recognition):** Sử dụng Apple Speech AI để nhận diện giọng nói và chia mốc thời gian LRC tự động.
 
-### 2. Công cụ hỗ trợ nét & sáng chuyên nghiệp (Professional Assist Tools)
-- **Thanh thông số 6 cột chuẩn ProCam:** `[ ISO ]  [ SEC ]  [ EV ]  [ AF ]  [ AWB ]  [ E/F ]` với gạch chân vàng hổ phách hiển thị trạng thái và giá trị thời gian thực.
-- **Thước cân bằng điện tử (Artificial Horizon / Tiltmeter):** Cảm biến con quay hồi chuyển 3 trục từ `CoreMotion`, tự động chuyển sang màu xanh lá (`PeakingGreen`) khi máy nằm ngang hoàn hảo trong ngưỡng $\pm 0.75^\circ$.
-- **Biểu đồ đo sáng thời gian thực (Live Luminance Histogram):** Biểu đồ 256 bậc độ sáng hiển thị dưới dạng đồ thị sóng gradient ở góc dưới bên phải.
-- **Đo âm lượng thời gian thực (Stereo Audio VU Meter):** Đo âm thanh micro đa kênh hiển thị 16 vạch chia màu (xanh lá, vàng, đỏ) ở cạnh trái màn hình khi quay Video.
-- **Điểm chạm lấy nét thông minh (Tap to Focus):** Vòng ngắm nét ma trận màu vàng hổ phách kèm biểu tượng mặt trời đo sáng AE tự động ẩn sau 2.5s.
-- **Lưới căn tỉ lệ (Composition Grids):** Quy tắc $1/3$ (Rule of Thirds), tỉ lệ vàng (Golden Ratio) và hồng tâm (Crosshair).
-- **Hộp thoại cài đặt nhanh (SET Modal):** Bật tắt Focus Peaking, Zebra stripes, Viewfinder Grid, Tiltmeter, Histogram và Aspect Ratio ($16:9$, $4:3$, $1:1$).
+### 2. Bộ công cụ xử lý âm thanh chuyên nghiệp (Audio Processing Tools)
+- **Bóc âm thanh từ Video (Video to MP3):** Chọn video trực tiếp từ Photos, trích xuất âm thanh ra các định dạng MP3, M4A, WAV, AAC với vòng tiến trình phần trăm hiển thị 1-100%.
+- **Cắt nhạc (Audio Trimmer):** Cắt đoạn điệp khúc bằng 2 tay cầm trượt trực quan, nghe thử đoạn cắt tức thì.
+- **Ghép nhạc (Audio Merger):** Nối nhiều file âm thanh tuần tự thành một bài hát duy nhất.
+- **Tăng âm lượng (Volume Booster):** Khuếch đại âm lượng lên đến 200% - 300%.
+- **Hiệu ứng mờ dần (Fade In / Fade Out):** Tùy chỉnh hiệu ứng to dần ở đầu bài và nhỏ dần ở cuối bài.
+- **Đổi định dạng âm thanh (Format Converter):** Tùy biến linh hoạt Format (MP3, M4A, WAV, AAC, FLAC, M4R), Sample Rate (44.1kHz, 48kHz, 96kHz) và Bitrate (128k, 192k, 256k, 320k).
+- **Nhạc chuông iPhone (M4R):** Xuất định dạng M4R kèm hướng dẫn cài đặt qua GarageBand không cần máy tính.
 
-### 3. Chế độ chụp chuyên dụng (Shooting Modes)
-- **Chụp ảnh định dạng Apple ProRAW & HEVC/JPEG:** Tận dụng bộ cảm biến 48MP/12MP để lưu đầy đủ dải tương phản động (Dynamic Range) và EXIF metadata.
-- **Chụp chống rung thông minh (Anti-Shake):** Phân tích dao động gia tốc tuyến tính và vận tốc góc từ `CoreMotion`, đảm bảo 15 khung hình liên tiếp ổn định tuyệt đối (~300ms) trước khi bấm chụp.
-- **Phơi sáng ảo thông minh (Slow Shutter / Frame Stacking Engine):**
-  - *Light Trails (Vệt đèn xe / Sao chạy):* Ghép đa khung hình bằng thuật toán `Maximum Luminance Blend` mà không làm cháy sáng hậu cảnh.
-  - *Motion Blur (Làm mượt dòng nước chảy / Mây bay):* Thuật toán `Running Weighted Average Accumulator` làm mờ chuyển động mượt mà không cần kính lọc ND vật lý.
-- **Quay phim chuyên nghiệp (Video Mode):** Hỗ trợ hiển thị huy hiệu `🔴 REC mm:ss` cùng đồng hồ đo âm lượng VU meter.
+### 3. Truyền file hai chiều qua Wi-Fi (Wi-Fi Web Transfer)
+- Tích hợp sẵn máy chủ HTTP nhẹ (`NWListener`) trên iPhone cổng `8080`.
+- Mở trình duyệt web trên máy tính (PC/Mac) theo địa chỉ IP cục bộ để:
+  - Tải lên (upload) nhạc từ máy tính sang điện thoại nhanh chóng.
+  - Nghe thử và tải về (download) các bài hát đã chỉnh sửa từ điện thoại về máy tính.
+  - Xem nhật ký truyền nhận file thời gian thực trên màn hình ứng dụng.
 
 ---
 
 ## 🏗 Cấu trúc dự án (Project Structure)
 
 ```
-d:\procam_ios\
+procam_ios/
 ├── procam_ios.xcodeproj/
-│   └── project.pbxproj             # File cấu hình đồ án Xcode chuẩn
+│   └── project.pbxproj             # File cấu hình đồ án Xcode đã tối ưu sạch 100%
 ├── README.md
 │
 └── procam_ios/
     ├── ProCamApp.swift             # Điểm khởi chạy ứng dụng SwiftUI (@main)
-    ├── Info.plist                  # Khai báo quyền Camera, Mic, Thư viện ảnh, Motion
+    ├── Info.plist                  # Cấu hình quyền Microphone, PhotoLibrary, Speech, LocalNetwork
     │
-    ├── Core/
-    │   ├── Camera/
-    │   │   ├── CameraManager.swift            # Quản lý AVFoundation, video, audio & raw
-    │   │   ├── CameraParameters.swift         # Data models, stops, enums và CameraUiState
-    │   │   └── LiveHistogramCalculator.swift  # Tính toán 256 luma bins từ pixel buffer
-    │   ├── Sensors/
-    │   │   ├── MotionSensorManager.swift      # Con quay hồi chuyển cho thước cân bằng
-    │   │   ├── AntiShakeDetector.swift        # Phát hiện đứng yên bằng gia tốc/vận tốc góc
-    │   │   └── AudioMeterManager.swift        # Đo mức decibel âm thanh thời gian thực
-    │   └── Computational/
-    │       └── FrameStackingEngine.swift      # Ghép ảnh Light Trails & Motion Blur
-    │
-    ├── UI/
-    │   ├── Theme/
-    │   │   └── ProCamTheme.swift              # Dark DSLR color palette & typography
-    │   ├── Views/
-    │   │   ├── CameraView.swift               # Màn hình chính điều phối giao diện
-    │   │   └── CameraPreviewView.swift        # AVCaptureVideoPreviewLayer cho SwiftUI
-    │   └── Components/
-    │       ├── CameraTopBarView.swift         # 2 tầng: Flash, RAW/TIFF/SBRT/AEB, SET & info
-    │       ├── ManualParamBarView.swift       # Dải 6 cột thông số ProCam
-    │       ├── HalideDrumDialView.swift       # Vòng xoay 3D Halide cho EV và ISO
-    │       ├── HalideFocusDialView.swift      # Bàn xoay lấy nét thủ công Macro -> ∞
-    │       ├── HalideWbDialView.swift         # Bàn xoay cân bằng trắng Kelvin (2000K-10000K)
-    │       ├── ProCamRulerDialView.swift      # Thước xoay tốc độ màn trập với kim đỏ
-    │       ├── LockControlView.swift          # Bảng điều khiển nút khóa AE/AF và WB Lock
-    │       ├── ModeSelectorView.swift         # Ngăn kéo mở rộng chế độ chụp
-    │       ├── ShutterControlView.swift       # Nút chụp DSLR morph, gallery, timer & zoom
-    │       ├── OverlaysView.swift             # Lưới, thước cân bằng, histogram, reticle
-    │       ├── ZoomControlWidget.swift        # Floating zoom pills 1x, 2x, 3x, 5x
-    │       ├── AudioVuMeterWidget.swift       # Thước đo âm lượng stereo dọc trong Video
-    │       └── ProCamSettingsModalView.swift  # Hộp thoại cài đặt nhanh DSLR SET
+    ├── AudioEditor/
+    │   ├── Models/
+    │   │   ├── AudioTrack.swift            # Model bài hát, thời lượng, kích thước, waveform
+    │   │   ├── AudioExportConfig.swift     # Enums định dạng, sample rate, bitrate, effects
+    │   │   ├── AudioToolType.swift         # Định nghĩa các công cụ trong app
+    │   │   └── LyricLine.swift             # Model câu lời bài hát & bộ phân giải LRC
+    │   │
+    │   ├── Core/
+    │   │   ├── AudioFileManager.swift          # Quản trị file Documents, import & lưu trữ
+    │   │   ├── AudioPlayerManager.swift        # Trình phát nhạc AVPlayer, scrubbing & sync lyrics
+    │   │   ├── AudioProcessingEngine.swift     # Xử lý cắt ghép, trích xuất, fade an toàn
+    │   │   ├── FFmpegCommandBridge.swift       # Xây dựng chuỗi lệnh FFmpeg chuẩn
+    │   │   ├── LyricSearchService.swift        # Tìm kiếm lời bài hát trực tuyến (LRCLIB API)
+    │   │   ├── OfflineLyricsStore.swift        # Kho lời bài hát ngoại tuyến (Xương Rồng, etc.)
+    │   │   ├── SpeechRecognitionService.swift  # Apple Speech AI trích xuất lyric từ giọng nói
+    │   │   ├── WaveformExtractor.swift         # Tính toán biên độ sóng âm thanh
+    │   │   ├── WifiHttpServer.swift            # Embedded HTTP Server phục vụ Web Transfer
+    │   │   └── WifiTransferManager.swift       # Quản trị trạng thái server & IP Wi-Fi
+    │   │
+    │   └── UI/
+    │       ├── Theme/
+    │       │   └── AudioEditorTheme.swift      # Bảng màu Coral Red & Surface Dark/Light
+    │       ├── Components/
+    │       │   ├── AudioControlButtonsView.swift   # Cụm phím Play/Pause, tua 10s, tốc độ, loop
+    │       │   ├── AudioLyricsSyncedView.swift    # View lời bài hát Karaoke chạy chữ thời gian thực
+    │       │   ├── AudioScrubberBar.swift          # Thanh trượt thời gian nghe nhạc
+    │       │   ├── AudioWaveformVisualizer.swift   # Bàn hiển thị sóng âm thanh trượt
+    │       │   └── WaveformTrimmerOverlay.swift    # Hai tay cầm cắt nhạc trực quan
+    │       └── Screens/
+    │           ├── AudioEditorMainView.swift       # 3 Tab điều hướng (Studio, Công cụ, Thư viện)
+    │           ├── AudioPlayerDetailView.swift     # Màn hình nghe nhạc chi tiết
+    │           ├── AudioToolsGridView.swift        # Màn hình lưới chọn công cụ
+    │           ├── AudioLibraryView.swift          # Màn hình danh sách nhạc & import
+    │           ├── VideoToAudioView.swift          # Màn hình bóc MP3 từ Video
+    │           ├── AudioTrimmerSheet.swift         # Modal cắt nhạc
+    │           ├── AudioMergerView.swift           # Màn hình ghép nối file
+    │           ├── AudioEffectsSheet.swift         # Modal chỉnh âm lượng & Fade
+    │           ├── ExportSettingsSheet.swift       # Modal xuất file & đổi định dạng
+    │           ├── LyricSearchSheet.swift          # Modal tìm kiếm lời bài hát
+    │           └── WifiTransferView.swift          # Màn hình máy chủ Wi-Fi Transfer
     │
     └── Resources/
-        └── Assets.xcassets/                   # Icon ứng dụng & tài nguyên đồ họa
+        ├── web_transfer.html       # Trang web điều khiển truyền file trên máy tính
+        └── Assets.xcassets/        # AppIcon và tài nguyên đồ họa
 ```
 
 ---
 
-## 🚀 Hướng dẫn mở và chạy dự án trên macOS (How to Run)
+## 🚀 Hướng dẫn mở và chạy trên macOS (Xcode)
 
-1. Sao chép thư mục `procam_ios` sang máy Mac (hoặc mở trực tiếp qua ổ đĩa mạng / USB).
-2. Mở dự án trong **Xcode**:
+1. Mở dự án trong **Terminal** trên máy Mac:
    ```bash
+   git clone https://github.com/Netluonjo/procam_ios.git
    cd procam_ios
    open procam_ios.xcodeproj
    ```
-3. Trong thanh trên cùng của Xcode, chọn thiết bị iPhone thật của bạn (hoặc iOS Simulator ví dụ iPhone 15 Pro / iPhone 16 Pro).
-4. Vào mục **Signing & Capabilities** trong Xcode và chọn **Team** cá nhân.
-5. Nhấn **Cmd + R** để biên dịch và trải nghiệm!
+2. Chọn thiết bị đích trên thanh công cụ của Xcode (iPhone thật hoặc iOS Simulator iPhone 15/16).
+3. Vào tab **Signing & Capabilities** để chọn Team cá nhân của bạn.
+4. Nhấn **Cmd + R** (hoặc nút Play) để biên dịch và trải nghiệm!

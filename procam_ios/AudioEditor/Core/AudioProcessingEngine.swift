@@ -93,7 +93,11 @@ public final class AudioProcessingEngine {
         let validStart = max(0, min(startTime, durationSeconds))
         let validEnd = min(max(validStart + 0.1, endTime), durationSeconds)
         
-        try? FileManager.default.removeItem(at: outputURL)
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("trim_\(UUID().uuidString).m4a")
+        try? FileManager.default.removeItem(at: tempURL)
+        defer {
+            try? FileManager.default.removeItem(at: tempURL)
+        }
         
         guard let exportSession = AVAssetExportSession(
             asset: asset,
@@ -106,7 +110,7 @@ public final class AudioProcessingEngine {
         let durationCMTime = CMTime(seconds: validEnd - validStart, preferredTimescale: 600)
         let timeRange = CMTimeRange(start: startCMTime, duration: durationCMTime)
         
-        exportSession.outputURL = outputURL
+        exportSession.outputURL = tempURL
         exportSession.outputFileType = .m4a
         exportSession.timeRange = timeRange
         
@@ -118,6 +122,9 @@ public final class AudioProcessingEngine {
         if exportSession.status != .completed {
             throw AudioProcessingError.exportFailed(exportSession.status)
         }
+        
+        try? FileManager.default.removeItem(at: outputURL)
+        try FileManager.default.moveItem(at: tempURL, to: outputURL)
     }
     
     // MARK: - Audio Merging
@@ -153,7 +160,11 @@ public final class AudioProcessingEngine {
             currentTime = CMTimeAdd(currentTime, trackDuration)
         }
         
-        try? FileManager.default.removeItem(at: outputURL)
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("merge_\(UUID().uuidString).m4a")
+        try? FileManager.default.removeItem(at: tempURL)
+        defer {
+            try? FileManager.default.removeItem(at: tempURL)
+        }
         
         guard let exportSession = AVAssetExportSession(
             asset: composition,
@@ -162,7 +173,7 @@ public final class AudioProcessingEngine {
             throw AudioProcessingError.exportSessionCreationFailed
         }
         
-        exportSession.outputURL = outputURL
+        exportSession.outputURL = tempURL
         exportSession.outputFileType = .m4a
         
         await exportSession.export()
@@ -173,6 +184,9 @@ public final class AudioProcessingEngine {
         if exportSession.status != .completed {
             throw AudioProcessingError.exportFailed(exportSession.status)
         }
+        
+        try? FileManager.default.removeItem(at: outputURL)
+        try FileManager.default.moveItem(at: tempURL, to: outputURL)
     }
     
     // MARK: - Audio Effects & Export (Volume & Fade)
@@ -245,7 +259,11 @@ public final class AudioProcessingEngine {
         
         audioMix.inputParameters = [mixParams]
         
-        try? FileManager.default.removeItem(at: outputURL)
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("effects_\(UUID().uuidString).m4a")
+        try? FileManager.default.removeItem(at: tempURL)
+        defer {
+            try? FileManager.default.removeItem(at: tempURL)
+        }
         
         guard let exportSession = AVAssetExportSession(
             asset: composition,
@@ -254,7 +272,7 @@ public final class AudioProcessingEngine {
             throw AudioProcessingError.exportSessionCreationFailed
         }
         
-        exportSession.outputURL = outputURL
+        exportSession.outputURL = tempURL
         exportSession.outputFileType = .m4a
         exportSession.audioMix = audioMix
         
@@ -266,6 +284,9 @@ public final class AudioProcessingEngine {
         if exportSession.status != .completed {
             throw AudioProcessingError.exportFailed(exportSession.status)
         }
+        
+        try? FileManager.default.removeItem(at: outputURL)
+        try FileManager.default.moveItem(at: tempURL, to: outputURL)
     }
 }
 

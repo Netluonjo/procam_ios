@@ -105,12 +105,9 @@
 			isa = PBXGroup;
 			children = (
 				AA0000102C12345600000010 /* ProCamApp.swift */,
-				AA0001012C12345600000101 /* AppRootView.swift */,
 				AA0000122C12345600000012 /* Info.plist */,
 				AA0001212C12345600000121 /* web_transfer.html */,
 				AA0003002C12345600000300 /* AudioEditor */,
-				AA0000302C12345600000030 /* Core */,
-				AA0000312C12345600000031 /* UI */,
 			);
 			path = procam_ios;
 			sourceTree = "<group>";
@@ -199,54 +196,6 @@
 				AA0001202C12345600000120 /* WifiTransferView.swift */,
 			);
 			path = Screens;
-			sourceTree = "<group>";
-		};
-		AA0000302C12345600000030 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000602C12345600000060 /* Camera */,
-				AA0000612C12345600000061 /* Sensors */,
-				AA0000622C12345600000062 /* Computational */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
-		AA0000602C12345600000060 /* Camera */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000152C12345600000015 /* CameraManager.swift */,
-				AA0000132C12345600000013 /* CameraParameters.swift */,
-				AA0000482C12345600000048 /* LiveHistogramCalculator.swift */,
-			);
-			path = Camera;
-			sourceTree = "<group>";
-		};
-		AA0000612C12345600000061 /* Sensors */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000422C12345600000042 /* AntiShakeDetector.swift */,
-				AA0000462C12345600000046 /* AudioMeterManager.swift */,
-				AA0000172C12345600000017 /* MotionSensorManager.swift */,
-			);
-			path = Sensors;
-			sourceTree = "<group>";
-		};
-		AA0000622C12345600000062 /* Computational */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000442C12345600000044 /* FrameStackingEngine.swift */,
-			);
-			path = Computational;
-			sourceTree = "<group>";
-		};
-		AA0000312C12345600000031 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000632C12345600000063 /* Theme */,
-				AA0000642C12345600000064 /* Views */,
-				AA0000652C12345600000065 /* Components */,
-			);
-			path = UI;
 			sourceTree = "<group>";
 		};
 
@@ -437,13 +386,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = procam_ios/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = ProCam;
+				INFOPLIST_KEY_CFBundleDisplayName = "MP3 Converter";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sondeptrai.procam;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sondeptrai.mp3converter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -459,13 +408,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = procam_ios/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = ProCam;
+				INFOPLIST_KEY_CFBundleDisplayName = "MP3 Converter";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sondeptrai.procam;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sondeptrai.mp3converter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
